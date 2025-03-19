@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大繁盛レストランパニック</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f4e6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #game-container {
+            width: 800px;
+            height: 600px;
+            background-color: #ffffff;
+            border: 4px solid #333;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        #player {
+            width: 80px;
+            height: 80px;
+            position: absolute;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 10;
+        }
+
+        .table {
+            width: 80px;
+            height: 80px;
+            background-color: #8b4513;
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .customer {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            background-image: url('images/customer.png');
+            /* お客さんの画像を設定 */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            border: none;
+            /* 既存の border を削除 */
+            background-color: transparent;
+            /* 背景色を透明に */
+        }
+
+        .cooking-station {
+            width: 120px;
+            height: 80px;
+            background-image: url('images/kitchen.png');
+            /* 厨房の画像を設定 */
+            background-size: contain;
+            /* 画像をコンテナに合わせる */
+            background-repeat: no-repeat;
+            /* 画像の繰り返しを防ぐ */
+            background-position: center;
+            /* 画像を中央に配置 */
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            border: 2px solid #333;
+        }
+
+        #beer-station {
+            left: 50px;
+            background-image: url('images/beer.png');
+        }
+
+        #water-station {
+            left: 200px;
+            background-image: url('images/water.png');
+        }
+
+        #soup-station {
+            left: 350px;
+            background-image: url('images/soup.png');
+        }
+
+        #chicken-station {
+            left: 500px;
+            background-image: url('images/chicken.png');
+        }
+
+        #salad-station {
+            left: 650px;
+            background-image: url('images/salad.png');
+        }
+
+        .food {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            position: absolute;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            border: 2px solid #333;
+        }
+
+        #score-display {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        #time-display {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        #controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .customer-mood {
+            width: 60px;
+            height: 10px;
+            background-color: #ddd;
+            position: absolute;
+            top: -15px;
+        }
+
+        .mood-fill {
+            height: 100%;
+            background-color: #32cd32;
+            width: 100%;
+            transition: width 0.5s;
+        }
+
+        .happy {
+            background-color: #32cd32;
+        }
+
+        .neutral {
+            background-color: #ffd700;
+        }
+
+        .angry {
+            background-color: #ff0000;
+        }
+
+        #game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 36px;
+            z-index: 100;
+        }
+
+        #tutorial {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+            z-index: 100;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .order-bubble {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border: 2px solid #333;
+            border-radius: 50%;
+            top: -45px;
+            left: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .order-bubble {
+            display: flex;
+            justify-content: flex-start;
+            padding: 5px;
+        }
+
+        .food-icon {
+            width: 30px;
+            height: 30px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>大繁盛レストランパニック</h1>
+    <div id="score-display">スコア: 0</div>
+    <div id="time-display">残り時間: 120秒</div>
+
+    <div id="game-container">
+        <div id="player"></div>
+        <div id="beer-station" class="cooking-station" data-food-type="beer"></div>
+        <div id="water-station" class="cooking-station" data-food-type="water"></div>
+        <div id="soup-station" class="cooking-station" data-food-type="soup"></div>
+        <div id="chicken-station" class="cooking-station" data-food-type="chicken"></div>
+        <div id="salad-station" class="cooking-station" data-food-type="salad"></div>
+        <div id="game-over">
+            <div>ゲームオーバー！</div>
+            <div id="final-score">最終スコア: 0</div>
+            <button id="restart-button">もう一度プレイ</button>
+        </div>
+        <div id="tutorial">
+            <h2>遊び方</h2>
+            <p>矢印キーでキャラクターを操作し、レストランで料理を提供しよう！</p>
+            <p>厨房で料理を取り、テーブルのお客さんに届けましょう。</p>
+            <p>お客さんの気分ゲージが赤くなる前に料理を届けてください。</p>
+            <button id="start-button">ゲームスタート</button>
+        </div>
+    </div>
+
+    <div id="controls">
+        <div>操作方法: 矢印キーで移動</div>
+        <div>スペースキーで料理を取る・提供する</div>
+    </div>
+
+    <script>
+        // ゲーム設定
+        const gameConfig = {
+            gameTime: 120, // ゲーム時間（秒）
+            customerPatience: 20, // お客さんの待ち時間（秒）
+            customerSpawnRate: 5, // 新しいお客さんが来る間隔（秒）
+            maxCustomers: 4, // 最大お客さん数
+            tablePositions: [
+                { x: 150, y: 150 },
+                { x: 350, y: 150 },
+                { x: 550, y: 150 },
+                { x: 150, y: 350 },
+                { x: 350, y: 350 },
+                { x: 550, y: 350 }
+            ]
+        };
+
+        // ゲーム状態
+        let gameState = {
+            score: 0,
+            timeRemaining: gameConfig.gameTime,
+            gameRunning: false,
+            player: {
+                x: 400,
+                y: 500,
+                speed: 20,
+                hasFood: false,
+                foods: [],
+                maxFoods: 3,
+                foodType: null
+            },
+            tables: [],
+            customers: [],
+            foods: [],
+            gameTimerId: null,
+            customerTimerId: null
+        };
+
+        // DOM要素
+        const gameContainer = document.getElementById('game-container');
+        const playerEl = document.getElementById('player');
+        const scoreDisplay = document.getElementById('score-display');
+        const timeDisplay = document.getElementById('time-display');
+        const gameOverScreen = document.getElementById('game-over');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const restartButton = document.getElementById('restart-button');
+        const tutorialScreen = document.getElementById('tutorial');
+        const startButton = document.getElementById('start-button');
+
+        // プレーヤーの初期設定
+        playerEl.style.backgroundImage = "url('images/01.png')";  // プレーヤーの画像を設定
+        playerEl.style.backgroundSize = "contain";  // 画像がプレーヤー要素に収まるようにサイズを調整
+        playerEl.style.backgroundColor = "transparent";  // 背景色を透明に
+
+        // テーブルを作成
+        function createTables() {
+            gameConfig.tablePositions.forEach((pos, index) => {
+                const table = document.createElement('div');
+                table.className = 'table';
+                table.style.left = `${pos.x}px`;
+                table.style.top = `${pos.y}px`;
+                table.textContent = index + 1;
+                table.dataset.index = index;
+                gameContainer.appendChild(table);
+
+                gameState.tables.push({
+                    index: index,
+                    x: pos.x,
+                    y: pos.y,
+                    hasCustomer: false,
+                    customerIndex: null
+                });
+            });
+        }
+
+        // 新しいお客さんを作成
+        function createCustomer() {
+            if (gameState.customers.length >= gameConfig.maxCustomers) return;
+
+            // 空いているテーブルを探す（より厳密なチェック）
+            const availableTables = gameState.tables.filter(table =>
+                !table.hasCustomer &&
+                !gameState.customers.some(customer => customer.tableIndex === table.index)
+            );
+
+            if (availableTables.length === 0) return;
+
+            // ランダムにテーブルを選択
+            const randomTable = availableTables[Math.floor(Math.random() * availableTables.length)];
+
+            // テーブルが既に使用中でないことを再確認
+            if (randomTable.hasCustomer) return;
+
+            randomTable.hasCustomer = true;
+
+            // お客さんを作成
+            const customer = document.createElement('div');
+            customer.className = 'customer';
+            customer.style.left = `${randomTable.x + 10}px`;
+            customer.style.top = `${randomTable.y - 10}px`;
+            customer.style.backgroundImage = "url('images/customer.png')"; // 初期状態の画像を明示的に設定
+
+            // お客さんの食べ物の好みをランダムに選択
+            const foodTypes = ['beer', 'water', 'soup', 'chicken', 'salad'];
+            const foodType = foodTypes[Math.floor(Math.random() * foodTypes.length)];
+
+            // 注文する料理の数をランダムに決定（1～3個）
+            const orderCount = Math.floor(Math.random() * 3) + 1;
+            const orderedFoods = [];
+
+            // ランダムに料理を選択
+            for (let i = 0; i < orderCount; i++) {
+                const foodType = foodTypes[Math.floor(Math.random() * foodTypes.length)];
+                orderedFoods.push(foodType);
+            }
+
+            // 注文吹き出しを追加（複数の料理を表示）
+            const orderBubble = document.createElement('div');
+            orderBubble.className = 'order-bubble';
+            orderBubble.style.width = `${40 * orderCount}px`; // 注文数に応じて幅を調整
+
+            orderedFoods.forEach((foodType, index) => {
+                const foodIcon = document.createElement('div');
+                foodIcon.className = 'food-icon';
+                foodIcon.style.backgroundImage = `url('images/${foodType}.png')`;
+                foodIcon.style.left = `${index * 35}px`;
+                orderBubble.appendChild(foodIcon);
+            });
+
+            customer.appendChild(orderBubble);
+
+            // 気分メーター
+            const moodBar = document.createElement('div');
+            moodBar.className = 'customer-mood';
+            const moodFill = document.createElement('div');
+            moodFill.className = 'mood-fill happy';
+            moodBar.appendChild(moodFill);
+            customer.appendChild(moodBar);
+
+            // お客さん情報を記録
+            const customerInfo = {
+                element: customer,
+                moodElement: moodFill,
+                tableIndex: randomTable.index,
+                orderedFoods: orderedFoods, // 注文した料理の配列
+                remainingFoods: [...orderedFoods], // 未提供の料理
+                patience: gameConfig.customerPatience,
+                served: false
+            };
+
+            gameContainer.appendChild(customer);
+            gameState.customers.push(customerInfo);
+            randomTable.customerIndex = gameState.customers.length - 1;
+
+            // 気分メーターの減少を開始
+            startMoodDecrease(customerInfo);
+        }
+
+        // 気分の減少
+        function startMoodDecrease(customer) {
+            const interval = setInterval(() => {
+                if (!gameState.gameRunning) {
+                    clearInterval(interval);
+                    return;
+                }
+
+                customer.patience -= 0.1;
+                const percentage = (customer.patience / gameConfig.customerPatience) * 100;
+                customer.moodElement.style.width = `${percentage}%`;
+
+                if (percentage < 30) {
+                    customer.moodElement.className = 'mood-fill angry';
+                    // 怒った状態の画像に切り替え
+                    customer.element.style.backgroundImage = "url('images/customerangry.png')";
+                } else if (percentage < 70) {
+                    customer.moodElement.className = 'mood-fill neutral';
+                    // 通常の状態の画像に切り替え
+                    customer.element.style.backgroundImage = "url('images/customer.png')";
+                }
+
+                if (customer.patience <= 0) {
+                    clearInterval(interval);
+                    removeCustomer(customer, false);
+                }
+            }, 100);
+        }
+
+        // お客さんを削除
+        function removeCustomer(customer, satisfied) {
+            // テーブルを空にする前に、正しいテーブルを見つける
+            const tableIndex = customer.tableIndex;
+            const table = gameState.tables.find(t => t.index === tableIndex);
+
+            if (!table) {
+                console.error('テーブルが見つかりません:', tableIndex);
+                return;
+            }
+
+            // スコアの調整（満足して帰った場合）
+            if (satisfied) {
+                gameState.score += 100;
+                scoreDisplay.textContent = `スコア: ${gameState.score}`;
+            } else {
+                // 客が怒って帰った場合
+                gameState.score = Math.max(0, gameState.score - 50);
+                scoreDisplay.textContent = `スコア: ${gameState.score}`;
+            }
+
+            // お客さんの要素を削除（null チェックを追加）
+            if (customer && customer.element && customer.element.parentNode) {
+                gameContainer.removeChild(customer.element);
+            }
+
+            // テーブルの状態をリセット
+            table.hasCustomer = false;
+            table.customerIndex = null;
+
+            // お客さんのリストから削除（インデックスの検索方法を改善）
+            const customerIndex = gameState.customers.findIndex(c => c === customer);
+            if (customerIndex !== -1) {
+                gameState.customers.splice(customerIndex, 1);
+            }
+        }
+
+        // getFood 関数の修正
+        function getFood() {
+            if (gameState.player.foods.length >= gameState.player.maxFoods) return;
+
+            const cookingStations = document.querySelectorAll('.cooking-station');
+            const playerRect = playerEl.getBoundingClientRect();
+
+            for (const station of cookingStations) {
+                const stationRect = station.getBoundingClientRect();
+                const distance = Math.sqrt(
+                    Math.pow(playerRect.left - stationRect.left, 2) +
+                    Math.pow(playerRect.top - stationRect.top, 2)
+                );
+
+                if (distance < 100) {
+                    const foodType = station.dataset.foodType;
+                    if (foodType) {
+                        // 料理を追加
+                        gameState.player.foods.push(foodType);
+
+                        // 料理の表示を更新
+                        updatePlayerFoods();
+                        break;
+                    }
+                }
+            }
+        }
+
+        // serveFood 関数の修正
+        function serveFood() {
+            if (gameState.player.foods.length === 0) return;
+
+            const playerRect = playerEl.getBoundingClientRect();
+            let foodServed = false;
+
+            for (const customer of gameState.customers) {
+                const customerRect = customer.element.getBoundingClientRect();
+                const distance = Math.sqrt(
+                    Math.pow(playerRect.left - customerRect.left, 2) +
+                    Math.pow(playerRect.top - customerRect.top, 2)
+                );
+
+                if (distance < 100) {
+                    // プレイヤーの持っている料理と注文の完全一致をチェック
+                    const playerFoodsStr = [...gameState.player.foods].sort().join(',');
+                    const orderedFoodsStr = [...customer.orderedFoods].sort().join(',');
+
+                    if (playerFoodsStr === orderedFoodsStr) {
+                        // 完全一致した場合、客を満足させて削除
+                        removeCustomer(customer, true);
+                        // プレイヤーの料理をクリア
+                        gameState.player.foods = [];
+                        updatePlayerFoods();
+                        foodServed = true;
+                        break;
+                    }
+                }
+            }
+
+            // 料理が提供されなかった場合（キャンセル処理）
+            if (!foodServed) {
+                gameState.player.foods = [];
+                updatePlayerFoods();
+            }
+        }
+
+        // イベントリスナーを設定（スクリプトの最後に配置）
+        document.addEventListener('keydown', handleKeyDown);
+
+        // スタートボタンのイベントリスナー
+        startButton.addEventListener('click', () => {
+            tutorialScreen.style.display = 'none';
+            initGame();
+        });
+
+        // リスタートボタンのイベントリスナー
+        restartButton.addEventListener('click', () => {
+            gameOverScreen.style.display = 'none';
+            initGame();
+        });
+
+        // 料理を配達
+        function serveFood() {
+            if (gameState.player.foods.length === 0) return;
+
+            const playerRect = playerEl.getBoundingClientRect();
+
+            for (let i = 0; i < gameState.customers.length; i++) {
+                const customer = gameState.customers[i];
+                const customerRect = customer.element.getBoundingClientRect();
+                const distance = Math.sqrt(
+                    Math.pow(playerRect.left - customerRect.left, 2) +
+                    Math.pow(playerRect.top - customerRect.top, 2)
+                );
+
+                if (distance < 100 && customer.remainingFoods.length > 0) {
+                    // プレイヤーの持っている料理と注文の照合
+                    const matchingFoodIndex = gameState.player.foods.findIndex(
+                        food => customer.remainingFoods.includes(food)
+                    );
+
+                    if (matchingFoodIndex !== -1) {
+                        const servedFood = gameState.player.foods[matchingFoodIndex];
+
+                        // 該当する料理を注文リストから削除
+                        const foodIndex = customer.remainingFoods.indexOf(servedFood);
+                        customer.remainingFoods.splice(foodIndex, 1);
+
+                        // プレイヤーの持っている料理を削除
+                        gameState.player.foods.splice(matchingFoodIndex, 1);
+                        const playerFood = document.getElementById(`player-food-${matchingFoodIndex}`);
+                        if (playerFood) {
+                            gameContainer.removeChild(playerFood);
+                        }
+
+                        // 全ての料理が提供されたかチェック
+                        if (customer.remainingFoods.length === 0) {
+                            removeCustomer(customer, true);
+                        }
+
+                        // 料理の表示を更新
+                        updatePlayerFoods();
+                        return;
+                    }
+                }
+            }
+
+            // 料理を破棄（テーブルの近くにいないか、違う料理だった場合）
+            const playerFood = document.getElementById('player-food');
+            if (playerFood) {
+                gameContainer.removeChild(playerFood);
+            }
+
+            gameState.player.hasFood = false;
+            gameState.player.foodType = null;
+        }
+
+        // プレイヤーの持っている料理の表示を更新する関数
+        function updatePlayerFoods() {
+            // 既存の料理表示をすべて削除
+            const existingFoods = document.querySelectorAll('.food');
+            existingFoods.forEach(food => food.remove());
+
+            // 現在持っている料理を表示
+            gameState.player.foods.forEach((foodType, index) => {
+                const food = document.createElement('div');
+                food.className = 'food';
+                food.id = `player-food-${index}`;
+                food.style.backgroundImage = `url('images/${foodType}.png')`;
+                food.style.left = `${gameState.player.x + 25}px`;
+                food.style.top = `${gameState.player.y - 20 - (index * 30)}px`;
+                gameContainer.appendChild(food);
+            });
+        }
+
+        // 現在持っている料理を表示
+        gameState.player.foods.forEach((foodType, index) => {
+            const food = document.createElement('div');
+            food.className = 'food';
+            food.style.backgroundImage = `url('images/${foodType}.png')`;
+            food.style.left = `${gameState.player.x + 25}px`;
+            food.style.top = `${gameState.player.y - 20 - index * 30}px`;
+            food.id = `player-food-${index}`;
+            gameContainer.appendChild(food);
+        });
+
+        // プレイヤーの移動
+        function movePlayer() {
+            playerEl.style.left = `${gameState.player.x}px`;
+            playerEl.style.top = `${gameState.player.y}px`;
+
+            // 持っている料理も一緒に移動
+            const playerFood = document.getElementById('player-food');
+            if (playerFood) {
+                playerFood.style.left = `${gameState.player.x + 25}px`;
+                playerFood.style.top = `${gameState.player.y - 20}px`;
+            }
+        }
+
+        // キーボード入力の処理
+        function handleKeyDown(e) {
+            if (!gameState.gameRunning) return;
+
+            switch (e.key) {
+                case 'ArrowUp':
+                    gameState.player.y = Math.max(0, gameState.player.y - gameState.player.speed);
+                    break;
+                case 'ArrowDown':
+                    gameState.player.y = Math.min(gameContainer.clientHeight - playerEl.clientHeight, gameState.player.y + gameState.player.speed);
+                    break;
+                case 'ArrowLeft':
+                    gameState.player.x = Math.max(0, gameState.player.x - gameState.player.speed);
+                    break;
+                case 'ArrowRight':
+                    gameState.player.x = Math.min(gameContainer.clientWidth - playerEl.clientWidth, gameState.player.x + gameState.player.speed);
+                    break;
+                case ' ': // スペースキー
+                    if (gameState.player.foods.length > 0) {
+                        serveFood();
+                    } else {
+                        getFood();
+                    }
+                    break;
+            }
+
+            movePlayer();
+            updatePlayerFoods();
+        }
+
+        // ゲームを初期化
+        function initGame() {
+            // ゲーム状態の初期化（一度だけ）
+            gameState = {
+                score: 0,
+                timeRemaining: gameConfig.gameTime,
+                gameRunning: true,
+                player: {
+                    x: 400,
+                    y: 500,
+                    speed: 20,
+                    hasFood: false,
+                    foods: [],
+                    maxFoods: 3
+                },
+                tables: [],
+                customers: [],
+                gameTimerId: null,
+                customerTimerId: null
+            };
+
+            // スコアと時間の表示をリセット
+            scoreDisplay.textContent = `スコア: ${gameState.score}`;
+            timeDisplay.textContent = `残り時間: ${gameState.timeRemaining}秒`;
+
+            // プレイヤーを配置
+            playerEl.style.left = `${gameState.player.x}px`;
+            playerEl.style.top = `${gameState.player.y}px`;
+
+            // テーブルを作成
+            createTables();
+
+            // タイマーの開始
+            gameState.gameTimerId = setInterval(() => {
+                gameState.timeRemaining--;
+                timeDisplay.textContent = `残り時間: ${gameState.timeRemaining}秒`;
+
+                if (gameState.timeRemaining <= 0) {
+                    endGame();
+                }
+            }, 1000);
+
+            // お客さんの生成タイマー
+            gameState.customerTimerId = setInterval(() => {
+                if (gameState.gameRunning) {
+                    createCustomer();
+                }
+            }, gameConfig.customerSpawnRate * 1000);
+
+            // 最初のお客さんを生成
+            createCustomer();
+        }
+
+        // ゲーム終了
+        function endGame() {
+            gameState.gameRunning = false;
+            clearInterval(gameState.gameTimerId);
+            clearInterval(gameState.customerTimerId);
+
+            finalScoreDisplay.textContent = `最終スコア: ${gameState.score}`;
+            gameOverScreen.style.display = 'flex';
+        }
+
+        // キーボードイベントのリスナー
+        document.addEventListener('keydown', handleKeyDown);
+
+        // スタートボタンのイベントリスナー
+        startButton.addEventListener('click', () => {
+            tutorialScreen.style.display = 'none';
+            initGame();
+        });
+
+        // リスタートボタンのイベントリスナー
+        restartButton.addEventListener('click', () => {
+            gameOverScreen.style.display = 'none';
+            initGame();
+        });
+    </script>
+</body>
+
+</html>
