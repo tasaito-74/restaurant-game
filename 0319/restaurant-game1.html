@@ -227,6 +227,28 @@
             background-repeat: no-repeat;
             background-position: center;
         }
+        
+        .pathway {
+            position: absolute;
+            left: 50px;
+            top: 0px; /* 開始位置を調整可能に */
+            width: 120px;
+            height: 900px; /* 長さを変更可能に */
+            background-color: rgba(156, 102, 2, 0.1);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .horizontal-pathway {
+            position: absolute;
+            top: 350px;
+            left: 170px; /* 開始位置を調整可能に */
+            width: 600px; /* 長さを変更可能に */
+            height: 70px;
+            background-color: rgba(156, 102, 2, 0.1);
+            z-index: 1;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -236,6 +258,8 @@
     <div id="time-display">残り時間: 120秒</div>
 
     <div id="game-container">
+        <div class="pathway"></div>
+        <div class="horizontal-pathway"></div>
         <div id="player"></div>
         <div id="beer-station" class="cooking-station" data-food-type="beer" 
         style="position: absolute; top: 20px; right: 20px;"></div>
@@ -269,11 +293,6 @@
         </div>
     </div>
 
-    <div id="controls">
-        <div>操作方法: 矢印キーで移動</div>
-        <div>スペースキーで料理を取る・提供する</div>
-    </div>
-
     <script>
         // ゲーム設定
         const gameConfig = {
@@ -282,12 +301,12 @@
             customerSpawnRate: 5, // 新しいお客さんが来る間隔（秒）
             maxCustomers: 4, // 最大お客さん数
             tablePositions: [
-                { x: 150, y: 250 },
-                { x: 350, y: 250 },
-                { x: 550, y: 250 },
-                { x: 150, y: 450 },
-                { x: 350, y: 450 },
-                { x: 550, y: 450 }
+                { x: 250, y: 250 },
+                { x: 450, y: 250 },
+                { x: 650, y: 250 },
+                { x: 250, y: 450 },
+                { x: 450, y: 450 },
+                { x: 650, y: 450 }
             ]
         };
 
