@@ -66,8 +66,8 @@
         }
 
         .cooking-station {
-            width: 120px;
-            height: 80px;
+            width: 90px;
+            height: 60px;
             background-image: url('images/kitchen.png');
             /* 厨房の画像を設定 */
             background-size: contain;
@@ -87,27 +87,27 @@
         }
 
         #beer-station {
-            left: 50px;
+            left: 220px;
             background-image: url('images/beer.png');
         }
 
         #water-station {
-            left: 200px;
+            left: 320px;
             background-image: url('images/water.png');
         }
 
         #soup-station {
-            left: 350px;
+            left: 420px;
             background-image: url('images/soup.png');
         }
 
         #chicken-station {
-            left: 500px;
+            left: 520px;
             background-image: url('images/chicken.png');
         }
 
         #salad-station {
-            left: 650px;
+            left: 620px;
             background-image: url('images/salad.png');
         }
 
@@ -237,15 +237,21 @@
 
     <div id="game-container">
         <div id="player"></div>
-        <div id="beer-station" class="cooking-station" data-food-type="beer"></div>
-        <div id="water-station" class="cooking-station" data-food-type="water"></div>
-        <div id="soup-station" class="cooking-station" data-food-type="soup"></div>
-        <div id="chicken-station" class="cooking-station" data-food-type="chicken"></div>
-        <div id="salad-station" class="cooking-station" data-food-type="salad"></div>
+        <div id="beer-station" class="cooking-station" data-food-type="beer" 
+        style="position: absolute; top: 20px; right: 20px;"></div>
+        <div id="water-station" class="cooking-station" data-food-type="water" 
+        style="position: absolute; top: 20px; right: 20px; display: flex;"></div>
+        <div id="soup-station" class="cooking-station" data-food-type="soup" 
+        style="position: absolute; top: 20px; right: 20px; display: flex;"></div>
+        <div id="chicken-station" class="cooking-station" data-food-type="chicken" 
+        style="position: absolute; top: 20px; right: 20px; display: flex;"></div>
+        <div id="salad-station" class="cooking-station" data-food-type="salad" 
+        style="position: absolute; top: 20px; right: 20px; display: flex;"></div>
         <div id="game-over">
             <div>ゲームオーバー！</div>
             <div id="final-score">最終スコア: 0</div>
             <button id="restart-button">もう一度プレイ</button>
+        <!-- Food buttons removed from here -->
         </div>
         <div id="tutorial">
             <h2>遊び方</h2>
@@ -253,6 +259,13 @@
             <p>厨房で料理を取り、テーブルのお客さんに届けましょう。</p>
             <p>お客さんの気分ゲージが赤くなる前に料理を届けてください。</p>
             <button id="start-button">ゲームスタート</button>
+        </div>
+        <div id="food-buttons" style="position: absolute; top: 100px; right: 70px; display: flex; gap: 0px; z-index: 20;">
+            <button onclick="startCooking('beer')">ビール</button>
+            <button onclick="startCooking('water')">水</button>
+            <button onclick="startCooking('soup')">スープ</button>
+            <button onclick="startCooking('chicken')">チキン</button>
+            <button onclick="startCooking('salad')">サラダ</button>
         </div>
     </div>
 
@@ -269,12 +282,12 @@
             customerSpawnRate: 5, // 新しいお客さんが来る間隔（秒）
             maxCustomers: 4, // 最大お客さん数
             tablePositions: [
-                { x: 150, y: 150 },
-                { x: 350, y: 150 },
-                { x: 550, y: 150 },
-                { x: 150, y: 350 },
-                { x: 350, y: 350 },
-                { x: 550, y: 350 }
+                { x: 150, y: 250 },
+                { x: 350, y: 250 },
+                { x: 550, y: 250 },
+                { x: 150, y: 450 },
+                { x: 350, y: 450 },
+                { x: 550, y: 450 }
             ]
         };
 
@@ -311,8 +324,7 @@
         // プレーヤーの初期設定
         playerEl.style.backgroundImage = "url('images/01.png')";  // プレーヤーの画像を設定
         playerEl.style.backgroundSize = "contain";  // 画像がプレーヤー要素に収まるようにサイズを調整
-        playerEl.style.backgroundColor = "transparent";  // 背景色を透明に
-
+        
         // テーブルを作成
         function createTables() {
             gameConfig.tablePositions.forEach((pos, index) => {
@@ -526,9 +538,7 @@
                     gameState.player.foodType = null;
 
                     // 規定の位置に戻る
-                    const centerX = (gameContainer.clientWidth - playerEl.clientWidth) / 2;
-                    const centerY = (gameContainer.clientHeight - playerEl.clientHeight)*4 / 5;
-                    movePlayerSmoothly(centerX, centerY);
+                    movePlayerSmoothly(50, 50);
                 });
                 return;
             }
@@ -592,8 +602,8 @@
                 timeRemaining: gameConfig.gameTime,
                 gameRunning: true,
                 player: {
-                    x: 400,
-                    y: 500,
+                    x: 50,
+                    y: 50,
                     speed: 20, // 5から10に変更してスピードアップ
                     hasFood: false,
                     foodType: null
@@ -637,15 +647,7 @@
             createCustomer();
         }
 
-        // ゲーム終了
-        function endGame() {
-            gameState.gameRunning = false;
-            clearInterval(gameState.gameTimerId);
-            clearInterval(gameState.customerTimerId);
-
-            finalScoreDisplay.textContent = `最終スコア: ${gameState.score}`;
-            gameOverScreen.style.display = 'flex';
-        }
+        
 
         // キーボードイベントのリスナー削除済み
 
@@ -663,23 +665,115 @@
 
         // タップでプレイヤーを移動し、必要に応じて料理取得または提供を行う
         gameContainer.addEventListener('click', function (e) {
-    if (!gameState.gameRunning) return;
+            if (!gameState.gameRunning) return;
 
-    const rect = gameContainer.getBoundingClientRect();
-    const tapX = e.clientX - rect.left;
-    const tapY = e.clientY - rect.top;
+            // タップ対象がテーブルでなければ無視
+            if (!e.target.classList.contains('table')) return;
 
-    const targetX = Math.max(0, Math.min(tapX - playerEl.offsetWidth / 2, gameContainer.clientWidth - playerEl.offsetWidth));
-    const targetY = Math.max(0, Math.min(tapY - playerEl.offsetHeight / 2, gameContainer.clientHeight - playerEl.offsetHeight));
+            const rect = gameContainer.getBoundingClientRect();
+            const tapX = e.clientX - rect.left;
+            const tapY = e.clientY - rect.top;
 
-    movePlayerSmoothly(targetX, targetY, () => {
-        if (gameState.player.hasFood) {
-            serveFood();
-        } else {
-            getFood();
+            const targetX = Math.max(0, Math.min(tapX - playerEl.offsetWidth / 2, gameContainer.clientWidth - playerEl.offsetWidth));
+            const targetY = Math.max(0, Math.min(tapY - playerEl.offsetHeight / 2, gameContainer.clientHeight - playerEl.offsetHeight));
+
+            movePlayerSmoothly(targetX, targetY, () => {
+                if (gameState.player.hasFood) {
+                    serveFood();
+                } else {
+                    getFood();
+                }
+            });
+        });
+        
+    function startCooking(foodType) {
+    const station = document.querySelector(`.cooking-station[data-food-type="${foodType}"]`);
+    if (!station) return;
+
+    // ボタン連打対策で一時的に無効にする
+    const buttons = document.querySelectorAll('#food-buttons button');
+    buttons.forEach(btn => btn.disabled = true);
+
+    // Add progress bar element above the station
+    const progressBar = document.createElement('div');
+    progressBar.style.position = 'absolute';
+    progressBar.style.bottom = `${station.offsetHeight + 5}px`;
+    progressBar.style.left = '0';
+    progressBar.style.width = '100%';
+    progressBar.style.height = '5px';
+    progressBar.style.backgroundColor = '#ccc';
+
+    const progressFill = document.createElement('div');
+    progressFill.style.width = '0%';
+    progressFill.style.height = '100%';
+    progressFill.style.backgroundColor = '#32cd32';
+    progressFill.style.transition = 'width 2s linear';
+
+    progressBar.appendChild(progressFill);
+    station.appendChild(progressBar);
+
+    // Trigger animation
+    setTimeout(() => {
+        progressFill.style.width = '100%';
+    }, 10);
+
+    // 一定時間後に料理を作成
+    setTimeout(() => {
+        const food = document.createElement('div');
+        food.className = 'food';
+        food.style.backgroundImage = `url('images/${foodType}.png')`;
+        food.style.left = `${station.offsetLeft + station.offsetWidth / 2 - 15}px`;
+        food.style.top = `${station.offsetTop + station.offsetHeight -5}px`;
+        food.dataset.foodType = foodType;
+        food.draggable = true;
+
+        food.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', foodType);
+            e.dataTransfer.setDragImage(food, 15, 15);
+        });
+
+        gameContainer.appendChild(food);
+
+        buttons.forEach(btn => btn.disabled = false);
+        station.removeChild(progressBar);
+    }, 2000); // 料理作成時間：2秒
+}
+
+  // ドラッグ＆ドロップの受け入れ
+  playerEl.addEventListener('dragover', (e) => e.preventDefault());
+  playerEl.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const foodType = e.dataTransfer.getData('text/plain');
+      if (gameState.player.hasFood) return;
+
+      gameState.player.hasFood = true;
+      gameState.player.foodType = foodType;
+
+      const food = document.createElement('div');
+      food.className = 'food';
+      food.id = 'player-food';
+      food.style.backgroundImage = `url('images/${foodType}.png')`;
+      food.style.left = `${gameState.player.x + 25}px`;
+      food.style.top = `${gameState.player.y - 20}px`;
+      gameContainer.appendChild(food);
+      
+      // ドラッグ元の料理を削除
+      const allFoods = document.querySelectorAll('.food');
+      allFoods.forEach(f => {
+          if (f !== food && f.dataset.foodType === foodType && !f.id) {
+              f.remove();
+          }
+      });
+  });
+    // ゲーム終了
+    function endGame() {
+            gameState.gameRunning = false;
+            clearInterval(gameState.gameTimerId);
+            clearInterval(gameState.customerTimerId);
+
+            finalScoreDisplay.textContent = `最終スコア: ${gameState.score}`;
+            gameOverScreen.style.display = 'flex';
         }
-    });
-});
     </script>
 </body>
 
