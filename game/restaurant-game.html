@@ -227,23 +227,27 @@
             background-repeat: no-repeat;
             background-position: center;
         }
-        
+
         .pathway {
             position: absolute;
             left: 50px;
-            top: 0px; /* 開始位置を調整可能に */
+            top: 0px;
+            /* 開始位置を調整可能に */
             width: 120px;
-            height: 900px; /* 長さを変更可能に */
+            height: 900px;
+            /* 長さを変更可能に */
             background-color: rgba(156, 102, 2, 0.1);
             z-index: 1;
             pointer-events: none;
         }
-        
+
         .horizontal-pathway {
             position: absolute;
             top: 350px;
-            left: 170px; /* 開始位置を調整可能に */
-            width: 600px; /* 長さを変更可能に */
+            left: 170px;
+            /* 開始位置を調整可能に */
+            width: 600px;
+            /* 長さを変更可能に */
             height: 70px;
             background-color: rgba(156, 102, 2, 0.1);
             z-index: 1;
@@ -261,21 +265,21 @@
         <div class="pathway"></div>
         <div class="horizontal-pathway"></div>
         <div id="player"></div>
-        <div id="beer-station" class="cooking-station" data-food-type="beer" 
-        style="position: absolute; top: 20px; right: 20px;"></div>
-        <div id="water-station" class="cooking-station" data-food-type="water" 
-        style="position: absolute; top: 20px; right: 20px; display: flex;"></div>
-        <div id="soup-station" class="cooking-station" data-food-type="soup" 
-        style="position: absolute; top: 20px; right: 20px; display: flex;"></div>
-        <div id="chicken-station" class="cooking-station" data-food-type="chicken" 
-        style="position: absolute; top: 20px; right: 20px; display: flex;"></div>
-        <div id="salad-station" class="cooking-station" data-food-type="salad" 
-        style="position: absolute; top: 20px; right: 20px; display: flex;"></div>
+        <div id="beer-station" class="cooking-station" data-food-type="beer"
+            style="position: absolute; top: 20px; right: 20px;"></div>
+        <div id="water-station" class="cooking-station" data-food-type="water"
+            style="position: absolute; top: 20px; right: 20px; display: flex;"></div>
+        <div id="soup-station" class="cooking-station" data-food-type="soup"
+            style="position: absolute; top: 20px; right: 20px; display: flex;"></div>
+        <div id="chicken-station" class="cooking-station" data-food-type="chicken"
+            style="position: absolute; top: 20px; right: 20px; display: flex;"></div>
+        <div id="salad-station" class="cooking-station" data-food-type="salad"
+            style="position: absolute; top: 20px; right: 20px; display: flex;"></div>
         <div id="game-over">
             <div>ゲームオーバー！</div>
             <div id="final-score">最終スコア: 0</div>
             <button id="restart-button">もう一度プレイ</button>
-        <!-- Food buttons removed from here -->
+            <!-- Food buttons removed from here -->
         </div>
         <div id="tutorial">
             <h2>遊び方</h2>
@@ -284,7 +288,8 @@
             <p>お客さんの気分ゲージが赤くなる前に料理を届けてください。</p>
             <button id="start-button">ゲームスタート</button>
         </div>
-        <div id="food-buttons" style="position: absolute; top: 100px; right: 70px; display: flex; gap: 0px; z-index: 20;">
+        <div id="food-buttons"
+            style="position: absolute; top: 100px; right: 70px; display: flex; gap: 0px; z-index: 20;">
             <button onclick="startCooking('beer')">ビール</button>
             <button onclick="startCooking('water')">水</button>
             <button onclick="startCooking('soup')">スープ</button>
@@ -330,7 +335,7 @@
         };
 
         // DOM要素
-        const   gameContainer = document.getElementById('game-container');
+        const gameContainer = document.getElementById('game-container');
         const playerEl = document.getElementById('player');
         const scoreDisplay = document.getElementById('score-display');
         const timeDisplay = document.getElementById('time-display');
@@ -343,7 +348,7 @@
         // プレーヤーの初期設定
         playerEl.style.backgroundImage = "url('images/01.png')";  // プレーヤーの画像を設定
         playerEl.style.backgroundSize = "contain";  // 画像がプレーヤー要素に収まるようにサイズを調整
-        
+
         // テーブルを作成
         function createTables() {
             gameConfig.tablePositions.forEach((pos, index) => {
@@ -529,40 +534,40 @@
             // プレイヤーの近くのお客さんを探す
             const playerRect = playerEl.getBoundingClientRect();
 
-    for (let i = 0; i < gameState.customers.length; i++) {
-        const customer = gameState.customers[i];
-        const customerElement = customer.element;
-        const customerRect = customerElement.getBoundingClientRect();
+            for (let i = 0; i < gameState.customers.length; i++) {
+                const customer = gameState.customers[i];
+                const customerElement = customer.element;
+                const customerRect = customerElement.getBoundingClientRect();
 
-        const distance = Math.sqrt(
-            Math.pow(playerRect.left - customerRect.left, 2) +
-            Math.pow(playerRect.top - customerRect.top, 2)
-        );
+                const distance = Math.sqrt(
+                    Math.pow(playerRect.left - customerRect.left, 2) +
+                    Math.pow(playerRect.top - customerRect.top, 2)
+                );
 
-        if (distance < 100 && !customer.served) {
-            // 料理の種類が合っているか確認
-            if (gameState.player.foodType === customer.foodType) {
-                const targetX = customerElement.offsetLeft;
-                const targetY = customerElement.offsetTop;
-                movePlayerSmoothly(targetX, targetY, () => {
-                    customer.served = true;
-                    removeCustomer(customer, true);
+                if (distance < 100 && !customer.served) {
+                    // 料理の種類が合っているか確認
+                    if (gameState.player.foodType === customer.foodType) {
+                        const targetX = customerElement.offsetLeft;
+                        const targetY = customerElement.offsetTop;
+                        movePlayerSmoothly(targetX, targetY, () => {
+                            customer.served = true;
+                            removeCustomer(customer, true);
 
-                    const playerFood = document.getElementById('player-food');
-                    if (playerFood) {
-                        gameContainer.removeChild(playerFood);
+                            const playerFood = document.getElementById('player-food');
+                            if (playerFood) {
+                                gameContainer.removeChild(playerFood);
+                            }
+
+                            gameState.player.hasFood = false;
+                            gameState.player.foodType = null;
+
+                            // 規定の位置に戻る
+                            movePlayerSmoothly(50, 50);
+                        });
+                        return;
                     }
-
-                    gameState.player.hasFood = false;
-                    gameState.player.foodType = null;
-
-                    // 規定の位置に戻る
-                    movePlayerSmoothly(50, 50);
-                });
-                return;
+                }
             }
-        }
-    }
 
             // 料理を破棄（テーブルの近くにいないか、違う料理だった場合）
             const playerFood = document.getElementById('player-food');
@@ -575,7 +580,7 @@
         }
 
         // プレイヤーの移動 (CSSアニメーションを使用)
-        function movePlayerSmoothly(targetX, targetY, callback) {   
+        function movePlayerSmoothly(targetX, targetY, callback) {
             const duration = 500; // ミリ秒（移動時間）
             playerEl.style.transition = `left ${duration}ms linear, top ${duration}ms linear`;
             playerEl.style.left = `${targetX}px`;
@@ -666,7 +671,7 @@
             createCustomer();
         }
 
-        
+
 
         // キーボードイベントのリスナー削除済み
 
@@ -704,88 +709,88 @@
                 }
             });
         });
-        
-    function startCooking(foodType) {
-    const station = document.querySelector(`.cooking-station[data-food-type="${foodType}"]`);
-    if (!station) return;
 
-    // ボタン連打対策で一時的に無効にする
-    const buttons = document.querySelectorAll('#food-buttons button');
-    buttons.forEach(btn => btn.disabled = true);
+        function startCooking(foodType) {
+            const station = document.querySelector(`.cooking-station[data-food-type="${foodType}"]`);
+            if (!station) return;
 
-    // Add progress bar element above the station
-    const progressBar = document.createElement('div');
-    progressBar.style.position = 'absolute';
-    progressBar.style.bottom = `${station.offsetHeight + 5}px`;
-    progressBar.style.left = '0';
-    progressBar.style.width = '100%';
-    progressBar.style.height = '5px';
-    progressBar.style.backgroundColor = '#ccc';
+            // ボタン連打対策で一時的に無効にする
+            const button = document.querySelector(`#food-buttons button[onclick="startCooking('${foodType}')"]`);
+            if (button) button.disabled = true;
 
-    const progressFill = document.createElement('div');
-    progressFill.style.width = '0%';
-    progressFill.style.height = '100%';
-    progressFill.style.backgroundColor = '#32cd32';
-    progressFill.style.transition = 'width 2s linear';
+            // Add progress bar element above the station
+            const progressBar = document.createElement('div');
+            progressBar.style.position = 'absolute';
+            progressBar.style.bottom = `${station.offsetHeight + 5}px`;
+            progressBar.style.left = '0';
+            progressBar.style.width = '100%';
+            progressBar.style.height = '5px';
+            progressBar.style.backgroundColor = '#ccc';
 
-    progressBar.appendChild(progressFill);
-    station.appendChild(progressBar);
+            const progressFill = document.createElement('div');
+            progressFill.style.width = '0%';
+            progressFill.style.height = '100%';
+            progressFill.style.backgroundColor = '#32cd32';
+            progressFill.style.transition = 'width 2s linear';
 
-    // Trigger animation
-    setTimeout(() => {
-        progressFill.style.width = '100%';
-    }, 10);
+            progressBar.appendChild(progressFill);
+            station.appendChild(progressBar);
 
-    // 一定時間後に料理を作成
-    setTimeout(() => {
-        const food = document.createElement('div');
-        food.className = 'food';
-        food.style.backgroundImage = `url('images/${foodType}.png')`;
-        food.style.left = `${station.offsetLeft + station.offsetWidth / 2 - 15}px`;
-        food.style.top = `${station.offsetTop + station.offsetHeight -5}px`;
-        food.dataset.foodType = foodType;
-        food.draggable = true;
+            // Trigger animation
+            setTimeout(() => {
+                progressFill.style.width = '100%';
+            }, 10);
 
-        food.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', foodType);
-            e.dataTransfer.setDragImage(food, 15, 15);
+            // 一定時間後に料理を作成
+            setTimeout(() => {
+                const food = document.createElement('div');
+                food.className = 'food';
+                food.style.backgroundImage = `url('images/${foodType}.png')`;
+                food.style.left = `${station.offsetLeft + station.offsetWidth / 2 - 15}px`;
+                food.style.top = `${station.offsetTop + station.offsetHeight - 5}px`;
+                food.dataset.foodType = foodType;
+                food.draggable = true;
+
+                food.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', foodType);
+                    e.dataTransfer.setDragImage(food, 15, 15);
+                });
+
+                gameContainer.appendChild(food);
+
+                if (button) button.disabled = false;
+                station.removeChild(progressBar);
+            }, 2000); // 料理作成時間：2秒
+        }
+
+        // ドラッグ＆ドロップの受け入れ
+        playerEl.addEventListener('dragover', (e) => e.preventDefault());
+        playerEl.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const foodType = e.dataTransfer.getData('text/plain');
+            if (gameState.player.hasFood) return;
+
+            gameState.player.hasFood = true;
+            gameState.player.foodType = foodType;
+
+            const food = document.createElement('div');
+            food.className = 'food';
+            food.id = 'player-food';
+            food.style.backgroundImage = `url('images/${foodType}.png')`;
+            food.style.left = `${gameState.player.x + 25}px`;
+            food.style.top = `${gameState.player.y - 20}px`;
+            gameContainer.appendChild(food);
+
+            // ドラッグ元の料理を削除
+            const allFoods = document.querySelectorAll('.food');
+            allFoods.forEach(f => {
+                if (f !== food && f.dataset.foodType === foodType && !f.id) {
+                    f.remove();
+                }
+            });
         });
-
-        gameContainer.appendChild(food);
-
-        buttons.forEach(btn => btn.disabled = false);
-        station.removeChild(progressBar);
-    }, 2000); // 料理作成時間：2秒
-}
-
-  // ドラッグ＆ドロップの受け入れ
-  playerEl.addEventListener('dragover', (e) => e.preventDefault());
-  playerEl.addEventListener('drop', (e) => {
-      e.preventDefault();
-      const foodType = e.dataTransfer.getData('text/plain');
-      if (gameState.player.hasFood) return;
-
-      gameState.player.hasFood = true;
-      gameState.player.foodType = foodType;
-
-      const food = document.createElement('div');
-      food.className = 'food';
-      food.id = 'player-food';
-      food.style.backgroundImage = `url('images/${foodType}.png')`;
-      food.style.left = `${gameState.player.x + 25}px`;
-      food.style.top = `${gameState.player.y - 20}px`;
-      gameContainer.appendChild(food);
-      
-      // ドラッグ元の料理を削除
-      const allFoods = document.querySelectorAll('.food');
-      allFoods.forEach(f => {
-          if (f !== food && f.dataset.foodType === foodType && !f.id) {
-              f.remove();
-          }
-      });
-  });
-    // ゲーム終了
-    function endGame() {
+        // ゲーム終了
+        function endGame() {
             gameState.gameRunning = false;
             clearInterval(gameState.gameTimerId);
             clearInterval(gameState.customerTimerId);
