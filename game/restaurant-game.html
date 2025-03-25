@@ -387,8 +387,9 @@
             // お客さんを作成
             const customer = document.createElement('div');
             customer.className = 'customer';
-            customer.style.left = `${randomTable.x + 10}px`;
-            customer.style.top = `${randomTable.y - 10}px`;
+            // Set initial position at the entrance
+            customer.style.left = `50px`;
+            customer.style.top = `0px`;
             customer.style.backgroundImage = "url('images/customer.png')"; // 初期状態の画像を明示的に設定
 
             // お客さんの食べ物の好みをランダムに選択（A, B, Cの中から）
@@ -411,6 +412,15 @@
 
             gameContainer.appendChild(customer);
 
+            // Animate customer moving to assigned table
+            const targetX = randomTable.x + 10;
+            const targetY = randomTable.y - 10;
+            customer.style.transition = 'left 1s linear, top 1s linear';
+            setTimeout(() => {
+                customer.style.left = `${targetX}px`;
+                customer.style.top = `${targetY}px`;
+            }, 10);
+
             // お客さん情報を記録
             const customerInfo = {
                 element: customer,
@@ -424,8 +434,10 @@
             gameState.customers.push(customerInfo);
             randomTable.customerIndex = gameState.customers.length - 1;
 
-            // 気分メーターの減少を開始
-            startMoodDecrease(customerInfo);
+            // Start mood decrease after customer reaches the table
+            setTimeout(() => {
+                startMoodDecrease(customerInfo);
+            }, 1000); // delay to match movement duration
         }
 
         // 気分の減少
